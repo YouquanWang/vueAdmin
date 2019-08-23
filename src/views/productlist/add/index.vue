@@ -149,6 +149,7 @@ export default {
     imgPreview (file) {
     },
     onChange (file, fileList) {
+      // console.log(this.groupImgList)
     },
     imgRemove (file, fileList) {
       fileList.forEach((item) => {

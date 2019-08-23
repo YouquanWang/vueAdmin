@@ -247,17 +247,30 @@ export default {
         return false
       }
       let params = {
+        id: this.id,
         title: this.params.title,
         pic: this.params.pic,
         catid: this.params.catid,
         istop: this.params.istop,
         status: this.params.status,
         recommend: this.params.recommend,
-        content: this.params.content,
-        attr: this.params.attr.toString(),
-        groupImg: this.params.groupImg.toString()
+        content: this.params.content
       }
-      this.axios.post('/admin/product/add', params)
+      this.params.attr.forEach((item, index) => {
+        if (index === 1) {
+          params.attr = item.toString()
+        } else {
+          params.attr += '-' + item.toString()
+        }
+      })
+      this.params.groupImg.forEach((item, index) => {
+        if (index === 0) {
+          params.groupImg = JSON.stringify(item)
+        } else {
+          params.groupImg += '-' + JSON.stringify(item)
+        }
+      })
+      this.axios.post('/admin/product/edit', params)
         .then((res) => {
           let _this = this
           if (res.status === 1) {
