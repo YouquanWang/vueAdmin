@@ -78,7 +78,7 @@
   </div>
   <div class="input-item">
     <span>内容</span>
-    <vue-editor id="editor" :useCustomImageHandler="true" @imageAdded="imageAdded" v-model="params.content"></vue-editor>
+    <vue-editor id="editor" useCustomImageHandler @image-added="imageAdded" v-model="params.content"></vue-editor>
   </div>
   <div class="input-item">
     <span></span>
@@ -120,9 +120,9 @@ export default {
     }
   },
   mounted () {
+    this.getAttribute()
     this.getProductInfo()
     this.getCategory()
-    this.getAttribute()
   },
   methods: {
     change () {
@@ -152,16 +152,19 @@ export default {
               this.params.status = false
             }
             this.params.content = data.content
-            data.attr.split('-')[0].split(',').forEach((item) => {
-              this.params.attr[1].push(Number.parseInt(item))
-            })
-            data.attr.split('-')[1].split(',').forEach((item) => {
-              this.params.attr[2].push(Number.parseInt(item))
+            let attrData = data.attr.split('-')
+            attrData.forEach((item) => {
+              let itemData = item.split('=')
+              let idArr = []
+              itemData[1].split(',').forEach((subItem) => {
+                idArr.push(parseInt(subItem))
+              })
+              this.params.attr[parseInt(itemData[0])] = idArr
             })
             data.groupImg.split('-').forEach((item) => {
               this.groupImgList.push(JSON.parse(item))
             })
-            console.log(this.params)
+            this.params.groupImg = this.groupImgList
           } else {
             this.$message.error(res.msg)
           }
@@ -176,7 +179,7 @@ export default {
           let _this = this
           this.attrList = res.data
           this.attrList.forEach((item) => {
-            _this.params.attr[item.id] = ''
+            _this.params.attr[item.id] = []
           })
         })
     },
@@ -195,24 +198,31 @@ export default {
     onChange (file, fileList) {
     },
     imgRemove (file, fileList) {
+      this.params.groupImg = []
       fileList.forEach((item) => {
-        this.params.groupImg.push({ name: item.name, url: item.response.imgUrl })
+        this.params.groupImg = []
+        if (item.response) {
+          this.params.groupImg.push({ name: item.name, url: item.response.imgUrl })
+        } else {
+          this.params.groupImg.push({ name: item.name, url: item.url })
+        }
       })
     },
     moreSuccess (res, file, fileList) {
+      this.params.groupImg = []
       fileList.forEach((item) => {
-        this.params.groupImg.push({ name: item.name, url: item.response.imgUrl })
+        if (item.response) {
+          this.params.groupImg.push({ name: item.name, url: item.response.imgUrl })
+        } else {
+          this.params.groupImg.push({ name: item.name, url: item.url })
+        }
       })
     },
     imageAdded (file, Editor, cursorLocation, resetUploader) {
       let formData = new FormData()
       formData.append('file', file)
-      console.log(formData.get('file'))
-      // console.log(file)
-      console.log(formData)
       this.axios.post('/admin/upload', formData)
         .then((res) => {
-          console.log(res)
           let url = res.imgUrl
           Editor.insertEmbed(cursorLocation, 'image', url)
           resetUploader()
@@ -257,12 +267,9 @@ export default {
         content: this.params.content
       }
       this.params.attr.forEach((item, index) => {
-        if (index === 1) {
-          params.attr = item.toString()
-        } else {
-          params.attr += '-' + item.toString()
-        }
+        params.attr += index + '=' + item.toString() + '-'
       })
+      params.attr = params.attr.slice(9, params.attr.length - 1)
       this.params.groupImg.forEach((item, index) => {
         if (index === 0) {
           params.groupImg = JSON.stringify(item)

@@ -78,7 +78,7 @@
   </div>
   <div class="input-item">
     <span>内容</span>
-    <vue-editor id="editor" :useCustomImageHandler="true" @imageAdded="imageAdded" v-model="params.content"></vue-editor>
+    <vue-editor id="editor" :useCustomImageHandler="true" @image-added="imageAdded" v-model="params.content"></vue-editor>
   </div>
   <div class="input-item">
     <span></span>
@@ -213,13 +213,9 @@ export default {
         content: this.params.content
       }
       this.params.attr.forEach((item, index) => {
-        console.log(item, index)
-        if (index === 1) {
-          params.attr = item.toString()
-        } else {
-          params.attr += '-' + item.toString()
-        }
+        params.attr += index + '=' + item.toString() + '-'
       })
+      params.attr = params.attr.slice(9, params.attr.length - 1)
       this.params.groupImg.forEach((item, index) => {
         console.log(item, index)
         if (index === 0) {
