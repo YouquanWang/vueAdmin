@@ -11,10 +11,10 @@
     </el-col>
     <el-col :span="4" class="userinfo">
       <el-dropdown trigger="hover">
-        <span class="el-dropdown-link userinfo-inner"><img src=""/> rrrrr</span>
+        <span class="el-dropdown-link userinfo-inner"><img :src="logo"/>{{username}}</span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item>我的消息</el-dropdown-item>
-          <el-dropdown-item>设置</el-dropdown-item>
+          <el-dropdown-item @click.native="$router.push({name: 'adminSetting'})">设置</el-dropdown-item>
           <el-dropdown-item divided>退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -67,6 +67,24 @@
 </el-row>
 </template>
 
+<script>
+import { userInfo } from '@/storage/index'
+export default {
+  data () {
+    return {
+      logo: '',
+      username: ''
+    }
+  },
+  mounted () {
+    userInfo.get(true).then((res) => {
+      this.logo = res.logo
+      this.username = res.username
+    })
+  }
+}
+</script>>
+
 <style scoped lang="scss">
 $color-primary: #20a0ff;
 .container {
@@ -101,9 +119,6 @@ $color-primary: #20a0ff;
       font-size: 22px;
       padding-left:20px;
       padding-right:20px;
-      border-color: rgba(238,241,146,0.3);
-      border-right-width: 1px;
-      border-right-style: solid;
       img {
         width: 40px;
         float: left;

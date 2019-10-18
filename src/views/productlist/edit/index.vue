@@ -120,8 +120,8 @@ export default {
     }
   },
   mounted () {
-    this.getAttribute()
     this.getProductInfo()
+    this.getAttribute()
     this.getCategory()
   },
   methods: {
@@ -257,7 +257,7 @@ export default {
         return false
       }
       let params = {
-        id: this.id,
+        id: this.params.id,
         title: this.params.title,
         pic: this.params.pic,
         catid: this.params.catid,

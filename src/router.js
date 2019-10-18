@@ -7,6 +7,7 @@ const ProductList = () => import('@/views/productlist')
 const ProductListAdd = () => import('@/views/productlist/add')
 const ProductListEdit = () => import('@/views/productlist/edit')
 const Category = () => import('@/views/category')
+const adminSetting = () => import('@/views/admin/setting')
 Vue.use(Router)
 
 const router = new Router({
@@ -46,6 +47,12 @@ const router = new Router({
       name: 'Category',
       component: Category,
       title: '分类管理'
+    },
+    {
+      path: '/admin/setting',
+      name: 'adminSetting',
+      component: adminSetting,
+      title: '设置'
     }
   ]
 })

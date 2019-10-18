@@ -1,6 +1,22 @@
 <template>
   <menu-header>
   <div class="category">
+<el-form :inline="true" style="text-align:left">
+  <el-form-item label="分类名称">
+    <el-input v-model="topAdd.name" placeholder="分类名称"></el-input>
+  </el-form-item>
+   <el-form-item>
+     <el-cascader
+    v-model="topAdd.pid"
+    :props="props"
+    :show-all-levels="false"
+    :options="topAdd.categoryList">
+    </el-cascader>
+   </el-form-item>
+  <el-form-item>
+    <el-button type="primary" @click="submitTop">添加分类</el-button>
+  </el-form-item>
+</el-form>
      <el-tree
       :data="list"
       show-checkbox
@@ -76,6 +92,17 @@ export default {
         parentId: '',
         parentName: '',
         name: ''
+      },
+      topAdd: {
+        name: '',
+        pid: '',
+        categoryList: []
+      },
+      props: {
+        value: 'id',
+        label: 'name',
+        emitPath: false,
+        checkStrictly: true
       }
     }
   },
@@ -87,6 +114,13 @@ export default {
       this.axios.post('/admin/category/list')
         .then((res) => {
           this.list = res.data
+          let categoryList = [...this.list]
+          categoryList.unshift({
+            name: '一级分类',
+            id: 1
+          })
+          this.topAdd.categoryList = categoryList
+          console.log(this.topAdd.categoryList)
         })
         .catch(error => {
           console.log(error)
@@ -97,6 +131,37 @@ export default {
       this.category.parentName = data.name
       this.category.parentId = data.id
       this.show = true
+    },
+    submitTop () {
+      if (!this.topAdd.name) {
+        this.$message.error('请输入分类名称')
+        return false
+      }
+      if (!this.topAdd.pid) {
+        this.$message.error('请选择分类')
+        return false
+      }
+      let args = {
+        name: this.topAdd.name,
+        pid: this.topAdd.pid
+      }
+      this.axios.post('/admin/category/add', args)
+        .then((res) => {
+          if (res.status === 1) {
+            this.show = false
+            this.getCategory()
+            this.$message({
+              message: res.msg,
+              type: 'success',
+              duration: 1000
+            })
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
     },
     submit () {
       if (!this.category.name) {
@@ -186,11 +251,8 @@ export default {
 </script>
 
 <style>
-.el-tree-node{
-  /* margin-bottom: 10px; */
-}
-.el-tree-node.is-expanded>.el-tree-node__children{
-  padding-top: 20px;
+.el-tree-node__content{
+  padding: 15px 0;
 }
 </style>
 

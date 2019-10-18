@@ -272,7 +272,7 @@ export default {
     height: 178px;
     display: block;
   }
-</style>>
+</style>
 <style lang="scss" scoped>
 .el-input{
     width: 500px;

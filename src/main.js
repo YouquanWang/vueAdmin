@@ -14,7 +14,16 @@ Vue.qs = qs
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 axios.defaults.withCredentials = true
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 axios.interceptors.request.use(config => {
+  if (config.method === 'post') {
+    if (config.data && config.data.constructor === FormData) {
+      return config
+    }
+    if (!config.data) {
+      config.data = {}
+    }
+  }
   return config
 },
 error => {
@@ -23,11 +32,14 @@ error => {
 
 axios.interceptors.response.use(response => {
   let data = response.data
-  console.log(data.url)
   if (data.url && data.url.includes('login')) {
-    console.log(111)
     clearUser()
     router.replace({ name: 'Login' })
+  } else {
+    if (typeof data === 'object' && data.status !== 1) {
+      Vue.prototype.$message.error(data.msg)
+      return Promise.reject(data.msg)
+    }
   }
   return response.data
 },
