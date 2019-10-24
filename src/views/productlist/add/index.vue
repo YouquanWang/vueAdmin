@@ -17,6 +17,14 @@
     :options="categoryList">
     </el-cascader>
      </div>
+       <div class="input-item">
+        <span>价格</span>
+        <el-input
+    placeholder="请输入价格"
+    type="number"
+    v-model="params.price">
+  </el-input>
+     </div>
      <div class="input-item">
          <span>上传主图</span>
          <el-upload
@@ -108,6 +116,7 @@ export default {
       params: {
         title: '',
         pic: '',
+        price: '',
         catid: '',
         istop: false,
         status: true,
@@ -183,12 +192,16 @@ export default {
         this.$message.error('请输入标题')
         return false
       }
-      if (!this.params.pic) {
-        this.$message.error('请输上传主图')
-        return false
-      }
       if (!this.params.catid) {
         this.$message.error('请选择分类')
+        return false
+      }
+      if (!this.params.price) {
+        this.$message.error('请输入价格')
+        return false
+      }
+      if (!this.params.pic) {
+        this.$message.error('请输上传主图')
         return false
       }
       if (!this.params.attr.length) {
@@ -206,6 +219,7 @@ export default {
       let params = {
         title: this.params.title,
         pic: this.params.pic,
+        price: parseFloat(this.params.price),
         catid: this.params.catid,
         istop: this.params.istop,
         status: this.params.status,

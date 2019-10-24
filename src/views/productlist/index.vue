@@ -27,6 +27,13 @@
       :src="scope.row.pic"></el-image>
       </template>
     </el-table-column>
+       <el-table-column
+      label="价格"
+      width="120">
+      <template slot-scope="scope">
+        {{ parseFloat(scope.row.price).toFixed(2) }}
+      </template>
+    </el-table-column>
     <el-table-column
       label="置顶"
       width="80">
