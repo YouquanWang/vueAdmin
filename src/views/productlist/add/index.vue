@@ -86,7 +86,7 @@
   </div>
   <div class="input-item">
     <span>内容</span>
-    <vue-editor id="editor" :useCustomImageHandler="true" @image-added="imageAdded" v-model="params.content"></vue-editor>
+    <vue-editor id="editor" useCustomImageHandler @image-added.native="imageAdded" v-model="params.content"></vue-editor>
   </div>
   <div class="input-item">
     <span></span>
@@ -174,7 +174,7 @@ export default {
       let formData = new FormData()
       formData.append('file', file)
       console.log(formData.get('file'))
-      // console.log(file)
+      console.log(file)
       console.log(formData)
       this.axios.post('/admin/upload', formData)
         .then((res) => {
@@ -233,9 +233,9 @@ export default {
       this.params.groupImg.forEach((item, index) => {
         console.log(item, index)
         if (index === 0) {
-          params.groupImg = JSON.stringify(item)
+          params.groupImg = item.url
         } else {
-          params.groupImg += '-' + JSON.stringify(item)
+          params.groupImg += '-' + item.url
         }
       })
       this.axios.post('/admin/product/add', params)

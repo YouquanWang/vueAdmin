@@ -171,10 +171,16 @@ export default {
               })
               this.params.attr[parseInt(itemData[0])] = idArr
             })
-            data.groupImg.split('-').forEach((item) => {
-              this.groupImgList.push(JSON.parse(item))
+            data.groupImg.split('-').forEach((item, index) => {
+              this.groupImgList.push(
+                {
+                  url: item,
+                  name: 'item' + index + '.png'
+                }
+              )
             })
             this.params.groupImg = this.groupImgList
+            console.log(this.params.groupImg)
           } else {
             this.$message.error(res.msg)
           }
@@ -287,9 +293,9 @@ export default {
       params.attr = params.attr.slice(9, params.attr.length - 1)
       this.params.groupImg.forEach((item, index) => {
         if (index === 0) {
-          params.groupImg = JSON.stringify(item)
+          params.groupImg = item.url
         } else {
-          params.groupImg += '-' + JSON.stringify(item)
+          params.groupImg += '-' + item.url
         }
       })
       this.axios.post('/admin/product/edit', params)
